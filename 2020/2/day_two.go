@@ -25,12 +25,7 @@ func problemOne(collection []string) int {
 		markers := strings.Split(values[0], "-")
 		char := strings.Split(values[1], ":")
 
-		match := 0
-		for _, c := range values[2] {
-			if char[0] == string(c) {
-				match++
-			}
-		}
+		match := strings.Count(values[2], char[0])
 
 		min, _ := strconv.Atoi(markers[0])
 		max, _ := strconv.Atoi(markers[1])
@@ -63,12 +58,12 @@ func problemTwo(collection []string) int {
 		nMin := min - 1
 		nMax := max - 1
 
-		fmt.Printf("Collection %v Markers %v \n", stringCollection, markers)
+		// fmt.Printf("Collection %v Markers %v \n", stringCollection, markers)
 		matchingChar := char[0]
-		fmt.Printf("Matcher %v-%v-%v \n", matchingChar, stringCollection[nMin], stringCollection[nMax])
-		fmt.Printf("Has Matching %v\n", stringCollection[nMin] == matchingChar || stringCollection[nMax] == matchingChar)
-		fmt.Printf("Has No Matching %v\n", !(stringCollection[nMin] == matchingChar && stringCollection[nMax] == matchingChar))
-		if (stringCollection[nMin] == matchingChar || stringCollection[nMax] == matchingChar) && !(stringCollection[nMin] == matchingChar && stringCollection[nMax] == matchingChar) {
+		// fmt.Printf("Matcher %v-%v-%v \n", matchingChar, stringCollection[nMin], stringCollection[nMax])
+		// fmt.Printf("Has Matching %v\n", stringCollection[nMin] == matchingChar || stringCollection[nMax] == matchingChar)
+		// fmt.Printf("Has No Matching %v\n", !(stringCollection[nMin] == matchingChar && stringCollection[nMax] == matchingChar))
+		if (stringCollection[nMin] == matchingChar) != (stringCollection[nMax] == matchingChar) {
 			validPword++
 		}
 	}
@@ -93,7 +88,6 @@ func main() {
 
 	ans := problemOne(collection)
 	fmt.Printf("Problem 1 Answer: %v \n", ans)
-
 	ans = problemTwo(collection)
 	fmt.Printf("Problem 2 Answer: %v \n", ans)
 }
