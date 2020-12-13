@@ -25,7 +25,14 @@ func problemOne(terrain []string, down int, right int) int {
 		}
 
 		yOffset += down
-		xOffset = (xOffset + right) % len(line)
+		xOffset += right
+		// Using Modulo
+		// xOffset = (xOffset + right) % len(line)
+
+		// Since modulo is slower we resolve into a much faster workaround
+		if xOffset >= len(line) {
+			xOffset -= len(line)
+		}
 	}
 	return match
 }
