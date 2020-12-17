@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"math"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -33,8 +35,9 @@ func decConverter(char string) string {
 
 // Convert Code into Binary and then Convert Binary to Decimal using
 // strconv package
-func highestSeatID(passes []string) int64 {
+func highestSeatID(passes []string) (hSeat int64, seatId int) {
 	var best int64 = 0
+	var ids []int
 	for i := 0; i < len(passes)-1; i++ {
 		code := passes[i]
 		rowCode := code[:7]
@@ -49,12 +52,68 @@ func highestSeatID(passes []string) int64 {
 		row, _ := strconv.ParseInt(rowCode, 2, 64)
 		col, _ := strconv.ParseInt(colCode, 2, 64)
 
-		fmt.Printf("Row set to %v and Col set to %v\n", row, col)
 		prod := (row * 8) + col
+		ids = append(ids, int(prod))
 		best = Max(best, prod)
 	}
 
-	return best
+	// Get Seat ID Where preceding seat is - 1 and next seat is + 1
+	// e.g 1,2,3 where 2 is id
+	var lastId int = -1
+	var matchSeatId int = 0
+	sort.Ints(ids) // always sort when finding linear integers
+	for _, i := range ids {
+		if lastId != -1 && i-lastId == 2 {
+			matchSeatId = i - 1
+		}
+		lastId = i
+	}
+	return best, matchSeatId
+}
+
+func seatSearch(passes []string) (highesSeat, ExactSeat int) {
+	var hSeat, seatId int
+	var ids []int
+
+	for c := 0; c < len(passes)-1; c++ {
+		code := passes[c]
+
+		var row float64 = 0
+		var col float64 = 0
+
+		for i := 0; i < 7; i++ {
+			if string(code[i]) == "B" {
+				val := float64(6 - i)
+				row += math.Pow(float64(2), val)
+			}
+		}
+
+		for i := 7; i < 10; i++ {
+			if string(code[i]) == "R" {
+				val := 9 - i
+				ans := math.Pow(float64(2), float64(val))
+				col += ans
+			}
+		}
+
+		rowCol := int(row)*8 + int(col)
+		ids = append(ids, int(rowCol))
+
+		if hSeat < rowCol {
+			hSeat = int(rowCol)
+		}
+	}
+
+	var lastId = -1
+	sort.Ints(ids)
+	for _, v := range ids {
+		if lastId != -1 && v-lastId == 2 {
+			seatId = v - 1
+		}
+		lastId = v
+	}
+
+	return hSeat, seatId
 }
 
 func Max(x, y int64) int64 {
@@ -69,6 +128,11 @@ func main() {
 	checkError(err)
 
 	passes := strings.Split(string(data), "\n")
+	hSeat, seatID := highestSeatID(passes)
+	fmt.Printf("Highest Seat ID %v \n", hSeat)
+	fmt.Printf("Seat ID %v\n", seatID)
 
-	fmt.Printf("Highest Seat ID %v", highestSeatID(passes))
+	// Using Binary Conversion
+	highest, exact := seatSearch(passes)
+	fmt.Printf("Highest Seat ID %v and Exact Seat ID %v \n", highest, exact)
 }
