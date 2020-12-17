@@ -106,6 +106,8 @@ func seatSearch(passes []string) (highesSeat, ExactSeat int) {
 
 	var lastId = -1
 	sort.Ints(ids)
+	// Find the missing seat in list of sorted seat ids
+	// i.e 556, 558 missing 557 in between
 	for _, v := range ids {
 		if lastId != -1 && v-lastId == 2 {
 			seatId = v - 1
